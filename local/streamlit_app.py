@@ -126,8 +126,12 @@ if uploaded_file is not None:
                 f"Module absent : {missing}. L'interface est installée, mais le moteur de transcription ne l'est pas encore."
             )
             st.code(
-                "python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.8.0 torchaudio==2.8.0\n"
-                "python -m pip install --resume-retries 20 -r requirements-local.txt",
+                "conda activate transcription\n"
+                "python -m pip install --index-url https://download.pytorch.org/whl/cpu "
+                '"torch>=2.8,<3" "torchaudio>=2.8,<3"\n'
+                "python -m pip install --resume-retries 20 -r requirements-local.txt\n"
+                "\n"
+                "# Si Python affiche 3.13 ou 3.14, recréer l'environnement en Python 3.12 ; voir README.md.",
                 language="bash",
             )
         except Exception as exc:
