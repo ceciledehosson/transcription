@@ -30,8 +30,8 @@ cd local
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-pip install -r requirements-local.txt
-streamlit run streamlit_app.py
+python -m pip install -r requirements-local.txt
+python -m streamlit run streamlit_app.py
 ```
 
 Sous Windows PowerShell, remplacer l'activation de l'environnement par :
@@ -47,6 +47,9 @@ http://localhost:8501
 ```
 
 La procédure détaillée est dans [`local/README.md`](local/README.md).
+
+Si l'installation échoue sur un gros paquet NVIDIA/CUDA, voir la procédure CPU
+dans [`local/README.md`](local/README.md).
 
 ## Utilisation dans Google Colab
 
