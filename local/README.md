@@ -1,155 +1,225 @@
-# AutoTranscript — utilisation locale
+# AutoTranscript - utilisation locale
 
-Cette procédure permet de transcrire localement un entretien audio avec
-**WhisperX** et, si souhaité, une diarisation des locuteurs avec **pyannote**.
-Elle s'adresse aux étudiant·es qui doivent produire une première transcription
-de travail à partir d'un entretien enregistré.
+Cette procedure permet de transcrire localement un entretien audio avec
+**WhisperX** et, si souhaite, de distinguer les locuteurs avec **pyannote.audio**.
+Elle s'adresse a des etudiant.es qui doivent obtenir une premiere transcription
+de travail a partir d'un entretien enregistre.
 
-La sortie automatique doit toujours être relue et corrigée à partir de l'audio.
-Elle ne constitue pas une transcription de recherche finalisée.
+La transcription automatique doit toujours etre relue et corrigee a partir de
+l'audio. Les etiquettes `Locuteur 1`, `Locuteur 2`, etc. ne sont pas une
+identification certaine des personnes.
 
-## Ce que produit le script
+## A lire avant de commencer
 
-Pour un fichier `entretien_01.m4a`, le script crée dans `outputs/` :
+L'installation locale est plus fragile que l'utilisation dans Google Colab,
+parce qu'elle depend de la version de Python et des paquets deja presents sur
+l'ordinateur. La methode conseillee ci-dessous utilise un environnement separe
+avec **Python 3.12**.
 
-- `entretien_01_transcript.txt` : texte horodaté, le plus pratique pour relire ;
+A retenir :
+
+- ne pas utiliser Python 3.13 ou 3.14 pour cette installation ;
+- installer d'abord l'interface Streamlit ;
+- installer ensuite le moteur de transcription ;
+- pour distinguer les locuteurs, il faut un token Hugging Face ;
+- sans diarisation, le token Hugging Face n'est pas necessaire.
+
+## Ce que produit l'outil
+
+Pour un fichier `entretien_01.m4a`, l'outil cree dans `outputs/` :
+
+- `entretien_01_transcript.txt` : texte horodate, le plus pratique pour relire ;
 - `entretien_01_transcript.srt` : sous-titres ;
-- `entretien_01_transcript.json` : sortie structurée à conserver.
+- `entretien_01_transcript.json` : sortie structuree a conserver.
 
-Avec diarisation, les locuteurs sont nommés `Locuteur 1`, `Locuteur 2`, etc.,
-selon leur ordre d'apparition. Ces étiquettes ne sont pas une identification des
-personnes : elles doivent être vérifiées et éventuellement renommées après
-écoute.
+Les fichiers audio sont copies dans `audio/`. Les resultats sont ecrits dans
+`outputs/`. Ces deux dossiers restent sur l'ordinateur local.
 
-## Prérequis
+## Telecharger le depot
 
-- Python 3.10 à 3.13.
-- `ffmpeg`, nécessaire pour lire les fichiers audio.
-- Une connexion internet lors de la première utilisation, pour télécharger les
-  modèles.
-- Pour distinguer les locuteurs : un compte Hugging Face, l'acceptation des
-  conditions d'accès du modèle `pyannote/speaker-diarization-community-1`, puis
-  un token Hugging Face en lecture.
+Methode simple, sans Git :
 
-Les fichiers audio et les transcriptions peuvent contenir des données
-personnelles. Ils doivent rester dans les dossiers locaux `audio/` et `outputs/`,
-qui ne doivent pas être ajoutés au dépôt GitHub.
+1. aller sur <https://github.com/ceciledehosson/transcription> ;
+2. cliquer sur le bouton vert `Code` ;
+3. cliquer sur `Download ZIP` ;
+4. extraire le fichier ZIP dans `Documents` ;
+5. ouvrir un terminal dans le dossier `Documents/transcription-main/local`.
 
-## Installation
-
-Depuis le dossier du dépôt :
+Methode avec Git :
 
 ```bash
-cd local
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements-local.txt
+cd ~/Documents
+git clone https://github.com/ceciledehosson/transcription.git
+cd transcription/local
 ```
 
-Sous Windows PowerShell :
-
-```powershell
-cd local
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements-local.txt
-```
-
-Si le téléchargement échoue sur un gros paquet `nvidia_cudnn_cu12`, installer
-d'abord la version CPU de PyTorch, puis relancer l'installation :
+Si le dossier vient d'un ZIP, la commande sera plutot :
 
 ```bash
-python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.8.0 torchaudio==2.8.0
-python -m pip install --resume-retries 20 -r requirements-local.txt
+cd ~/Documents/transcription-main/local
 ```
 
-Pour ouvrir seulement l'interface graphique, sans installer tout de suite le
-moteur WhisperX/pyannote :
+## Prerequis
+
+- Miniforge, Anaconda ou Miniconda, pour pouvoir creer un environnement Python
+  3.12 meme si l'ordinateur utilise une autre version de Python.
+- `ffmpeg`, necessaire pour lire les fichiers audio.
+- Une connexion internet lors de la premiere installation et de la premiere
+  transcription, pour telecharger les modeles.
+- Pour la diarisation : un compte Hugging Face et un token en lecture.
+
+Installer `ffmpeg` si la commande n'existe pas deja :
 
 ```bash
-python -m pip install -r requirements-ui.txt
-python -m streamlit run streamlit_app.py
+sudo apt install ffmpeg
 ```
 
-Installer ensuite `ffmpeg` si la commande n'est pas déjà disponible :
-
-- Ubuntu/Debian : `sudo apt install ffmpeg`
-- macOS avec Homebrew : `brew install ffmpeg`
-- Windows : `winget install Gyan.FFmpeg`
-
-Vérifier l'installation :
+Verifier :
 
 ```bash
 ffmpeg -version
 ```
 
-## Ajouter le token Hugging Face
-
-La diarisation pyannote nécessite un token. Le plus simple est de copier le
-fichier d'exemple :
+Sous macOS avec Homebrew :
 
 ```bash
-cp .env.example .env
+brew install ffmpeg
 ```
 
-Puis de remplacer la valeur par le token personnel :
+Sous Windows :
 
-```text
-HF_TOKEN=hf_xxxxxxxxxxxxxxxxxxxxxxxxx
+```powershell
+winget install Gyan.FFmpeg
 ```
 
-Ne jamais déposer le fichier `.env` dans GitHub et ne jamais transmettre son
-token à quelqu'un d'autre.
+## Installation conseillee avec Conda
 
-Si l'on veut seulement obtenir une transcription sans distinguer les locuteurs,
-le token n'est pas nécessaire : il faudra lancer le script avec
-`--no-diarization`.
+Depuis le dossier `local` :
 
-## Utilisation avec l'interface graphique
+```bash
+conda create -n transcription python=3.12 -y
+conda activate transcription
+python --version
+```
 
-L'interface graphique est le mode conseillé pour les étudiant·es.
+La derniere commande doit afficher `Python 3.12...`.
 
-Depuis le dossier `local`, lancer :
+Installer ensuite l'interface :
+
+```bash
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements-ui.txt
+python -m streamlit run streamlit_app.py
+```
+
+A ce stade, l'interface doit s'ouvrir dans le navigateur. Elle peut encore
+afficher `Module absent : torch` au moment de lancer la transcription : c'est
+normal tant que le moteur n'a pas ete installe.
+
+Arreter Streamlit avec `Ctrl+C`, puis installer le moteur de transcription :
+
+```bash
+python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.8,<3" "torchaudio>=2.8,<3"
+python -m pip install --resume-retries 20 -r requirements-local.txt
+```
+
+Relancer ensuite :
 
 ```bash
 python -m streamlit run streamlit_app.py
 ```
 
-Une page s'ouvre dans le navigateur, en général à l'adresse :
+## Relancer l'outil plus tard
+
+Les fois suivantes, il ne faut pas refaire l'installation. Il suffit de revenir
+au dossier `local`, d'activer l'environnement, puis de lancer Streamlit :
+
+```bash
+cd ~/Documents/transcription-main/local
+conda activate transcription
+python -m streamlit run streamlit_app.py
+```
+
+Si le depot a ete telecharge avec Git :
+
+```bash
+cd ~/Documents/transcription/local
+conda activate transcription
+python -m streamlit run streamlit_app.py
+```
+
+## Installation sans Conda
+
+Cette option convient seulement si Python 3.12 est deja installe sur
+l'ordinateur.
+
+```bash
+cd ~/Documents/transcription-main/local
+python3.12 -m venv .venv
+source .venv/bin/activate
+python --version
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements-ui.txt
+python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.8,<3" "torchaudio>=2.8,<3"
+python -m pip install --resume-retries 20 -r requirements-local.txt
+python -m streamlit run streamlit_app.py
+```
+
+## Token Hugging Face pour la diarisation
+
+La diarisation sert a separer les locuteurs. Elle utilise un modele pyannote qui
+doit etre telecharge une premiere fois depuis Hugging Face.
+
+Etapes :
+
+1. creer ou ouvrir un compte sur <https://huggingface.co/> ;
+2. accepter les conditions du modele
+   <https://huggingface.co/pyannote/speaker-diarization-community-1> ;
+3. aller dans <https://huggingface.co/settings/tokens> ;
+4. creer un token de type `Read` ;
+5. copier ce token dans le champ `Token Hugging Face` de l'interface Streamlit.
+
+Le token sert a autoriser le telechargement du modele. Il ne sert pas a envoyer
+l'audio a Hugging Face.
+
+Si l'on veut seulement transcrire sans distinguer les locuteurs, il suffit de
+decocher `Distinguer les locuteurs` dans l'interface. Dans ce cas, aucun token
+n'est necessaire.
+
+## Utilisation dans l'interface
+
+Dans la page Streamlit :
+
+1. deposer le fichier audio ;
+2. laisser `Distinguer les locuteurs` coche si l'on veut la diarisation ;
+3. indiquer le nombre de locuteurs attendus ;
+4. sur un ordinateur ordinaire, choisir plutot `cpu`, `small`, `int8` et une
+   taille de lot de `4` ;
+5. cliquer sur `Lancer la transcription` ;
+6. telecharger le fichier TXT, SRT ou JSON.
+
+L'adresse locale est generalement :
 
 ```text
 http://localhost:8501
 ```
 
-L'utilisation se fait ensuite dans la page :
-
-1. déposer le fichier audio ;
-2. choisir si l'on veut distinguer les locuteurs ;
-3. indiquer le nombre de locuteurs si la diarisation est activée ;
-4. laisser les réglages par défaut, ou choisir `cpu`, `small` et `int8` sur une
-   machine peu puissante ;
-5. lancer la transcription ;
-6. télécharger le fichier TXT, SRT ou JSON.
-
-Cette interface est locale : les fichiers sont copiés dans `audio/` et les
-résultats sont écrits dans `outputs/`. Le navigateur ne sert qu'à afficher une
-interface sur l'ordinateur qui exécute Python.
-
-Les statistiques d'usage Streamlit sont désactivées dans
-`.streamlit/config.toml`.
+Le navigateur affiche seulement l'interface. Les fichiers restent dans les
+dossiers locaux `audio/` et `outputs/`.
 
 ## Utilisation en ligne de commande
 
-Créer un dossier `audio/`, y placer l'entretien, puis lancer :
+L'interface Streamlit est conseillee pour les etudiant.es. La ligne de commande
+reste disponible si besoin.
+
+Pour un entretien a deux personnes :
 
 ```bash
 mkdir -p audio outputs
 python local_transcribe.py audio/entretien_01.m4a --num-speakers 2
 ```
 
-Pour un entretien à trois personnes :
+Pour un entretien a trois personnes :
 
 ```bash
 python local_transcribe.py audio/entretien_01.m4a --num-speakers 3
@@ -161,45 +231,60 @@ Pour transcrire sans diarisation :
 python local_transcribe.py audio/entretien_01.m4a --no-diarization
 ```
 
-Par défaut, le script utilise le GPU NVIDIA s'il est disponible. Sans GPU, il
-passe en mode CPU avec un modèle plus léger. Pour forcer un réglage adapté à un
-ordinateur peu puissant :
+Pour forcer un reglage leger sur CPU :
 
 ```bash
 python local_transcribe.py audio/entretien_01.m4a --device cpu --model small --compute-type int8 --batch-size 4
 ```
 
-Pour privilégier la qualité sur une machine équipée d'un GPU NVIDIA :
-
-```bash
-python local_transcribe.py audio/entretien_01.m4a --device cuda --model medium --compute-type float16 --batch-size 8
-```
-
-## Après la transcription
+## Apres la transcription
 
 1. Ouvrir le fichier TXT.
-2. Réécouter l'audio en suivant les horodatages.
+2. Reecouter l'audio en suivant les horodatages.
 3. Corriger les mots mal reconnus, les coupes de phrases et les changements de
    locuteur.
-4. Conserver séparément le JSON brut et la transcription corrigée.
-5. Anonymiser les noms propres si l'entretien doit être partagé ou analysé hors
-   de l'espace de travail prévu.
+4. Conserver separement le JSON brut et la transcription corrigee.
+5. Anonymiser les noms propres si l'entretien doit etre partage ou analyse hors
+   de l'espace de travail prevu.
 
-## Problèmes fréquents
+## Problemes frequents
 
-- `ffmpeg not found` : installer `ffmpeg`, puis rouvrir le terminal.
-- `HF_TOKEN absent` : vérifier le fichier `.env` ou lancer avec
-  `--no-diarization`.
-- Accès pyannote refusé : vérifier que les conditions du modèle Hugging Face ont
-  bien été acceptées avec le même compte que celui du token.
-- Mémoire GPU insuffisante : utiliser `--model small` et diminuer
-  `--batch-size`.
-- Exécution très lente : c'est normal sur CPU pour des entretiens longs ; lancer
-  d'abord un court extrait permet de vérifier que tout fonctionne.
+| Message ou situation | Que faire |
+| --- | --- |
+| `No module named streamlit` | Activer l'environnement avec `conda activate transcription`, puis lancer `python -m pip install -r requirements-ui.txt`. |
+| `Module absent : torch` | L'interface est installee, mais pas le moteur. Installer `torch`, `torchaudio`, puis `requirements-local.txt`. |
+| `Could not find a version that satisfies the requirement torch==2.8.0` | Ancienne consigne ou Python trop recent. Repartir avec l'environnement Conda en Python 3.12 et utiliser la commande non figee `"torch>=2.8,<3"`. |
+| `Could not find ... whisperx==3.8.6` | Verifier que `python --version` affiche bien Python 3.12 et que l'installation de `requirements-local.txt` n'est pas lancee avec l'index PyTorch. |
+| `partially initialized module 'torchvision' has no attribute 'extension'` | `torchvision` est inutile ici et peut etre incompatible. Lancer `python -m pip uninstall -y torchvision`, puis relancer Streamlit. |
+| `ffmpeg not found` | Installer `ffmpeg`, puis rouvrir le terminal. |
+| `HF_TOKEN absent` | Coller le token Hugging Face dans l'interface, ou decocher `Distinguer les locuteurs`. |
+| Acces pyannote refuse | Accepter les conditions du modele pyannote avec le meme compte Hugging Face que celui du token. |
+| Transcription tres lente | C'est normal sur CPU pour un entretien long. Tester d'abord un court extrait et choisir `small`, `int8`, taille de lot `4`. |
 
-## Versions
+## Recommencer proprement
 
-Les versions sont indiquées dans `requirements-local.txt`. Elles reprennent la
-configuration WhisperX + pyannote utilisée dans la version Colab, avec un usage
-local possible sur GPU ou CPU.
+Si l'environnement est trop abime, on peut le supprimer puis le recreer :
 
+```bash
+conda deactivate
+conda env remove -n transcription
+conda create -n transcription python=3.12 -y
+conda activate transcription
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements-ui.txt
+python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.8,<3" "torchaudio>=2.8,<3"
+python -m pip install --resume-retries 20 -r requirements-local.txt
+python -m streamlit run streamlit_app.py
+```
+
+## Donnees personnelles
+
+Les fichiers audio et les transcriptions peuvent contenir des donnees
+personnelles. Ne pas deposer dans GitHub :
+
+- les fichiers audio ;
+- les sorties de transcription ;
+- le fichier `.env` ;
+- les tokens Hugging Face.
+
+Les dossiers `audio/` et `outputs/` sont ignores par Git.
