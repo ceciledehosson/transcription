@@ -127,8 +127,15 @@ if uploaded_file is not None:
             )
             st.code(
                 "conda activate transcription\n"
+                "\n"
+                "# Windows ou Linux\n"
                 "python -m pip install --index-url https://download.pytorch.org/whl/cpu "
                 '"torch>=2.8,<3" "torchaudio>=2.8,<3"\n'
+                "\n"
+                "# macOS\n"
+                'python -m pip install "torch>=2.8,<3" "torchaudio>=2.8,<3"\n'
+                "\n"
+                "# Puis, dans tous les cas\n"
                 "python -m pip install --resume-retries 20 -r requirements-local.txt\n"
                 "\n"
                 "# Si Python affiche 3.13 ou 3.14, recréer l'environnement en Python 3.12 ; voir README.md.",
