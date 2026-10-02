@@ -6,8 +6,6 @@ from pathlib import Path
 
 import streamlit as st
 
-from local_transcribe import transcribe_audio
-
 
 BASE_DIR = Path(__file__).resolve().parent
 AUDIO_DIR = BASE_DIR / "audio"
@@ -106,6 +104,8 @@ if uploaded_file is not None:
             status.markdown("\n".join(f"- {item}" for item in messages))
 
         try:
+            from local_transcribe import transcribe_audio
+
             with st.spinner("Transcription en cours..."):
                 paths = transcribe_audio(
                     audio_path=audio_path,
@@ -120,6 +120,16 @@ if uploaded_file is not None:
                     env_file=ENV_FILE,
                     progress=progress,
                 )
+        except ModuleNotFoundError as exc:
+            missing = exc.name or "une dépendance Python"
+            st.error(
+                f"Module absent : {missing}. L'interface est installée, mais le moteur de transcription ne l'est pas encore."
+            )
+            st.code(
+                "python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.8.0 torchaudio==2.8.0\n"
+                "python -m pip install --resume-retries 20 -r requirements-local.txt",
+                language="bash",
+            )
         except Exception as exc:
             st.error(str(exc))
         else:
