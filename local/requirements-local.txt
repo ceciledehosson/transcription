@@ -1,0 +1,6 @@
+# Versions tested for local use with Python 3.10-3.13
+whisperx==3.8.6
+numpy==2.2.6
+pyannote-audio==4.0.7
+huggingface-hub==0.36.2
+streamlit>=1.38,<2
