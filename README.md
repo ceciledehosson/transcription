@@ -17,35 +17,28 @@ doivent aussi être vérifiées.
 | Situation | Méthode conseillée |
 | --- | --- |
 | Ordinateur peu puissant ou installation locale difficile | Google Colab |
-| Besoin d'une interface simple avec boutons | Local avec Streamlit |
+| Étudiantes et étudiants sous Windows ou macOS | Local avec Streamlit, procédure Conda |
 | Données à garder sur l'ordinateur personnel | Local avec Streamlit |
 | Utilisateur à l'aise avec le terminal | Local en ligne de commande |
 
 ## Utilisation locale avec Streamlit
 
-La procédure détaillée est dans [`local/README.md`](local/README.md).
+La procédure détaillée pour **Windows**, **macOS** et **Linux** est dans
+[`local/README.md`](local/README.md).
 
 Point important : l'installation locale est conseillée avec un environnement
 séparé en **Python 3.12**. Python 3.13 ou 3.14 peut provoquer des erreurs avec
 WhisperX, PyTorch ou pyannote.
 
-Résumé pour une installation avec Conda, depuis le dossier `local` :
+Le principe général est :
 
-```bash
-conda create -n transcription python=3.12 -y
-conda activate transcription
-python -m pip install --upgrade pip setuptools wheel
-python -m pip install -r requirements-ui.txt
-python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.8,<3" "torchaudio>=2.8,<3"
-python -m pip install --resume-retries 20 -r requirements-local.txt
-python -m streamlit run streamlit_app.py
-```
-
-L'interface s'ouvre ensuite dans le navigateur, généralement à l'adresse :
-
-```text
-http://localhost:8501
-```
+1. télécharger le dépôt ;
+2. ouvrir Miniforge Prompt, Anaconda Prompt ou Terminal ;
+3. créer un environnement Conda `transcription` en Python 3.12 ;
+4. installer `ffmpeg` dans cet environnement ;
+5. installer Streamlit ;
+6. installer le moteur de transcription adapté au système ;
+7. lancer `python -m streamlit run streamlit_app.py`.
 
 Pour distinguer les locuteurs, il faut aussi un token Hugging Face. Sans
 diarisation, aucun token n'est nécessaire.
