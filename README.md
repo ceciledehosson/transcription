@@ -64,3 +64,17 @@ personnelles. Ne pas déposer dans GitHub :
 - les fichiers `.env`.
 
 Les dossiers `audio/` et `outputs/` sont ignorés par Git.
+
+## Licence et crédits
+
+Ce dépôt est distribué sous licence MIT. Voir [`LICENSE`](LICENSE).
+
+Cette licence concerne les fichiers de ce dépôt. Les bibliothèques, services et
+modèles utilisés, notamment WhisperX, pyannote.audio, PyTorch, Streamlit,
+Hugging Face et Google Colab, conservent leurs licences et conditions
+d'utilisation propres.
+
+Conception et adaptation pédagogique : Cécile de Hosson.
+
+Aide à la structuration technique, à la rédaction des modes d'emploi et au
+débogage initial : ChatGPT (OpenAI).
