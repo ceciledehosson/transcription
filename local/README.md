@@ -57,6 +57,22 @@ python -m pip install --upgrade pip
 pip install -r requirements-local.txt
 ```
 
+Si le téléchargement échoue sur un gros paquet `nvidia_cudnn_cu12`, installer
+d'abord la version CPU de PyTorch, puis relancer l'installation :
+
+```bash
+python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.8.0 torchaudio==2.8.0
+python -m pip install --resume-retries 20 -r requirements-local.txt
+```
+
+Pour ouvrir seulement l'interface graphique, sans installer tout de suite le
+moteur WhisperX/pyannote :
+
+```bash
+python -m pip install -r requirements-ui.txt
+python -m streamlit run streamlit_app.py
+```
+
 Installer ensuite `ffmpeg` si la commande n'est pas déjà disponible :
 
 - Ubuntu/Debian : `sudo apt install ffmpeg`
@@ -98,7 +114,7 @@ L'interface graphique est le mode conseillé pour les étudiant·es.
 Depuis le dossier `local`, lancer :
 
 ```bash
-streamlit run streamlit_app.py
+python -m streamlit run streamlit_app.py
 ```
 
 Une page s'ouvre dans le navigateur, en général à l'adresse :
