@@ -1,5 +1,5 @@
 # Local transcription stack tested with Python 3.12.
-# Install torch and torchaudio first from the CPU PyTorch index; see README.md.
+# Install torch and torchaudio first; see README.md for the Windows, macOS or Linux command.
 whisperx==3.8.6
 numpy==2.2.6
 pyannote-audio==4.0.7
