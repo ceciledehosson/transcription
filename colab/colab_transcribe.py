@@ -82,10 +82,10 @@ def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
     p.add_argument("audio", type=Path)
     p.add_argument("--output-dir", type=Path, default=Path("outputs"))
-    p.add_argument("--model", default="medium")
+    p.add_argument("--model", default="small")
     p.add_argument("--language", default="fr")
     p.add_argument("--num-speakers", type=int, default=3)
-    p.add_argument("--batch-size", type=int, default=8)
+    p.add_argument("--batch-size", type=int, default=4)
     p.add_argument("--compute-type", default="float16", choices=["float16", "float32", "int8"])
     return p.parse_args()
 
