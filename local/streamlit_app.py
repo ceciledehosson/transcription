@@ -52,7 +52,7 @@ with st.expander("À savoir avant de commencer", expanded=True):
 
 uploaded_file = st.file_uploader(
     "Choisir le fichier audio de l'entretien",
-    type=["mp3", "wav", "m4a", "ogg", "flac", "aac", "mp4", "mkv", "mov"],
+    type=["mp3", "wav", "m4a", "ogg", "flac", "aac", "wma"],
 )
 
 with st.sidebar:
@@ -68,9 +68,9 @@ with st.sidebar:
     )
     language = st.text_input("Langue", value="fr")
     device = st.selectbox("Machine", ["auto", "cpu", "cuda"], index=0)
-    model = st.selectbox("Modèle Whisper", ["auto", "small", "medium", "large-v3"], index=0)
-    compute_type = st.selectbox("Calcul", ["auto", "int8", "float16", "float32"], index=0)
-    batch_size = st.slider("Taille des lots", min_value=1, max_value=16, value=8)
+    model = st.selectbox("Modèle Whisper", ["small", "medium", "large-v3", "auto"], index=0)
+    compute_type = st.selectbox("Calcul", ["int8", "float16", "float32", "auto"], index=0)
+    batch_size = st.slider("Taille des lots", min_value=1, max_value=16, value=4)
 
     hf_token = ""
     if diarization:
@@ -81,7 +81,7 @@ with st.sidebar:
         )
 
     st.markdown("---")
-    st.caption("Sur CPU, commencer par `small` et `int8` est souvent plus prudent.")
+    st.caption("Les réglages par défaut privilégient la stabilité. Passer à `medium` seulement si la machine tient bien la charge.")
 
 if uploaded_file is not None:
     AUDIO_DIR.mkdir(parents=True, exist_ok=True)
