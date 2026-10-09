@@ -43,7 +43,7 @@ def hhmmss(seconds: float) -> str:
 def srt_time(seconds: float) -> str:
     ms = max(0, int(round(seconds * 1000)))
     h, rem = divmod(ms, 3_600_000)
-    m, rem = divmod(rem, 60_000)
+    m, rem = divmod(ms - h * 3_600_000, 60_000)
     s, ms = divmod(rem, 1000)
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
@@ -115,7 +115,7 @@ def transcribe_audio(
     model: str | None = None,
     language: str = "fr",
     num_speakers: int = 2,
-    batch_size: int = 8,
+    batch_size: int = 4,
     compute_type: str | None = None,
     device: str = "auto",
     no_diarization: bool = False,
@@ -203,7 +203,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--model", default=None, help="Modèle WhisperX. Défaut : medium sur GPU, small sur CPU.")
     p.add_argument("--language", default="fr")
     p.add_argument("--num-speakers", type=int, default=2)
-    p.add_argument("--batch-size", type=int, default=8)
+    p.add_argument("--batch-size", type=int, default=4)
     p.add_argument("--compute-type", default=None, choices=["float16", "float32", "int8"])
     p.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     p.add_argument("--no-diarization", action="store_true", help="Transcrire sans distinguer les locuteurs.")
